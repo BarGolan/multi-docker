@@ -1,0 +1,15 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t bargolan/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true bargolan/react-test npm test
+
+after_success:
+  - docker build bargolan/multi-client ./client
+  - docker build bargolan/multi-nginx ./nginx
+  - docker build bargolan/multi-server ./server
+  - docker build bargolan/multi-worker ./worker

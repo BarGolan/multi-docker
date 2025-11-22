@@ -10,15 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker build -t bargolan/react-test -f ./client/Dockerfile.dev ./client
-      - run: docker run -e CI=true bargolan/react-test npm test
+      - run: docker build -t bargolan1/react-test -f ./client/Dockerfile.dev ./client
+      - run: docker run -e CI=true bargolan1/react-test npm test
 
-      - run: docker build -t bargolan/multi-client ./client
-      - run: docker build -t bargolan/multi-nginx ./nginx
-      - run: docker build -t bargolan/multi-server ./server
-      - run: docker build -t bargolan/multi-worker ./worker
+      - run: docker build -t bargolan1/multi-client ./client
+      - run: docker build -t bargolan1/multi-nginx ./nginx
+      - run: docker build -t bargolan1/multi-server ./server
+      - run: docker build -t bargolan1/multi-worker ./worker
 
-      - run: docker push bargolan/multi-client
-      - run: docker push bargolan/multi-nginx
-      - run: docker push bargolan/multi-server
-      - run: docker push bargolan/multi-worker
+      - run: docker push bargolan1/multi-client
+      - run: docker push bargolan1/multi-nginx
+      - run: docker push bargolan1/multi-server
+      - run: docker push bargolan1/multi-worker

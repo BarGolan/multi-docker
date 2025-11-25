@@ -27,5 +27,8 @@ services:
     image: "bargolan1/multi-nginx"
     mem_limit: 128m
     hostname: nginx
+    link:
+      - client
+      - server
     ports:
       - "80:80"

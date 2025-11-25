@@ -2,7 +2,7 @@ name: Deploy MultiDocker
 on:
   push:
     branches:
-      - main # check your repo, your default branch might be master!
+      - main
 
 jobs:
   build:
@@ -22,3 +22,18 @@ jobs:
       - run: docker push bargolan1/multi-nginx
       - run: docker push bargolan1/multi-server
       - run: docker push bargolan1/multi-worker
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: multi-docker
+          environment_name: Multi-docker-env
+          existing_bucket_name: elasticbeanstalk-eu-north-1-684974965406
+          region: eu-north-1
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip

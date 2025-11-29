@@ -13,7 +13,13 @@
       "image": "bargolan1/multi-server",
       "hostname": "api",
       "essential": false,
-      "memory": 128
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 5000,
+          "containerPort": 5000
+        }
+      ]
     },
     {
       "name": "worker",

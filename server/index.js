@@ -77,6 +77,15 @@ app.post("/values", async (req, res) => {
 
 const startApp = async () => {
   console.log("Server trying to connect to DBs...");
+  console.log("Redis Host:", keys.redisHost);
+  console.log("Redis Port:", keys.redisPort);
+  
+  console.log("Postgres Host:", keys.pgHost);
+  console.log("Postgres Database:", keys.pgDatabase);
+  console.log("Postgres User:", keys.pgUser);
+  console.log("Postgres Port:", keys.pgPort);
+  console.log("Postgres Password:", keys.pgPassword);
+
   try {
     // 1. Connect to Redis FIRST
     await redisClient.connect();

@@ -77,10 +77,14 @@ const startApp = async () => {
     // 1. Connect to Redis FIRST
     console.log("Trying to connect to Redis Client...");
     await redisClient.connect();
-    console.log("Redis Client connected");
+    redisClient.on('error', (err) => console.error('Redis Client Error:', err));
+    redisClient.on('end', () => console.warn('Redis Connection Ended Unexpectedly!'));
+    redisClient.on('reconnecting', () => console.log('Redis attempting to reconnect...'));
+
     console.log("Trying to connect to Redis Publisher...");
     await redisPublisher.connect();
     console.log("Redis Publisher connected");
+
 
     // 2. NOW that dependencies are ready, start the server
     app.listen(5000, () => {

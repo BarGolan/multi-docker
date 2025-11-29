@@ -30,7 +30,10 @@ const pgClient = new Pool({
 pgClient.on("connect", (client) => {
   client
     .query("CREATE TABLE IF NOT EXISTS values (number INT)")
-    .catch((err) => console.error(err));
+    .then(() => {
+      console.log("Postgres table 'values' is ready");
+    })
+    .catch((err) => console.error("Failed to connect to postress", err));
 });
 
 const redis = require("redis");
@@ -39,8 +42,8 @@ const redisClient = redis.createClient({
   url: `redis://${keys.redisHost}:${keys.redisPort}`,
   socket: {
     // This is the v4 replacement for retry_strategy
-    reconnectStrategy: () => 1000
-  }
+    reconnectStrategy: () => 1000,
+  },
 });
 
 const redisPublisher = redisClient.duplicate();
@@ -79,7 +82,7 @@ const startApp = async () => {
   console.log("Server trying to connect to DBs...");
   console.log("Redis Host:", keys.redisHost);
   console.log("Redis Port:", keys.redisPort);
-  
+
   console.log("Postgres Host:", keys.pgHost);
   console.log("Postgres Database:", keys.pgDatabase);
   console.log("Postgres User:", keys.pgUser);
@@ -88,15 +91,14 @@ const startApp = async () => {
 
   try {
     // 1. Connect to Redis FIRST
-    await redisClient.connect();
-    await redisPublisher.connect();
-    console.log("Connected to Redis");
+    // await redisClient.connect();
+    // await redisPublisher.connect();
+    // console.log("Connected to Redis");
 
     // 2. NOW that dependencies are ready, start the server
     app.listen(5000, () => {
       console.log("Listening on port 5000");
     });
-
   } catch (err) {
     console.error("Failed to start server:", err);
     process.exit(1); // Exit if we can't connect

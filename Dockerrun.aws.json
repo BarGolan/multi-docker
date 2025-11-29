@@ -9,7 +9,7 @@
       "memory": 128
     },
     {
-      "name": "api",
+      "name": "server",
       "image": "bargolan1/multi-server",
       "hostname": "api",
       "essential": false,

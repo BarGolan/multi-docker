@@ -48,3 +48,8 @@ Nov 29 22:01:02 ip-172-31-4-80 run-parts(/etc/cron.hourly)[9217]: starting cron.
 Nov 29 22:01:02 ip-172-31-4-80 run-parts(/etc/cron.hourly)[9282]: finished cron.logrotate.elasticbeanstalk.eb-ecs-mgr.conf
 Nov 29 22:01:02 ip-172-31-4-80 run-parts(/etc/cron.hourly)[9217]: starting cron.logrotate.elasticbeanstalk.healthd.conf
 Nov 29 22:01:02 ip-172-31-4-80 run-parts(/etc/cron.hourly)[9289]: finished cron.logrotate.elasticbeanstalk.healthd.conf
+Nov 29 22:10:01 ip-172-31-4-80 CROND[12669]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Nov 29 22:10:01 ip-172-31-4-80 CROND[12670]: (root) CMD (/opt/elasticbeanstalk/bin/publishlogs -type publish)
+Nov 29 22:13:01 ip-172-31-4-80 anacron[2521]: Job `cron.monthly' started
+Nov 29 22:13:01 ip-172-31-4-80 anacron[2521]: Job `cron.monthly' terminated
+Nov 29 22:13:01 ip-172-31-4-80 anacron[2521]: Normal exit (3 jobs run)

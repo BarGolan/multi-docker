@@ -7,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// --- POSTGRES SETUP (Unchanged) ---
 const { Pool } = require("pg");
 
 const pgClient = new Pool({
@@ -30,17 +31,28 @@ pgClient.on("connect", (client) => {
     .catch((err) => console.error("Failed to connect to postress", err));
 });
 
+// --- REDIS CLUSTER SETUP (Modified) ---
 const redis = require("redis");
-const redisClient = redis.createClient({
-  // THIS IS THE V4 FIX
-  url: `redis://${keys.redisHost}:${keys.redisPort}`,
-  socket: {
-    // This is the v4 replacement for retry_strategy
-    reconnectStrategy: () => 1000,
+
+const redisClient = redis.createCluster({
+  rootNodes: [
+    {
+      // AWS ElastiCache Configuration Endpoint
+      url: `redis://${keys.redisHost}:${keys.redisPort}`,
+    },
+  ],
+  defaults: {
+    socket: {
+      reconnectStrategy: () => 1000,
+    },
   },
 });
 
+// duplicate() works with createCluster in v4 to create a new connection 
+// using the same config, which is perfect for the Publisher.
 const redisPublisher = redisClient.duplicate();
+
+// --- EXPRESS ROUTES (Unchanged) ---
 app.get("/", (req, res) => {
   res.send("Hi");
 });
@@ -64,27 +76,35 @@ app.post("/values", async (req, res) => {
   const index = req.body.index;
   if (parseInt(index) > 40) return res.status(422).send("Index too high");
 
-  redisClient.hSet("values", index, "Nothing yet!");
-  redisPublisher.publish("insert", index);
+  // In cluster mode, the client automatically hashes the key ("values") 
+  // and sends it to the correct shard.
+  await redisClient.hSet("values", index, "Nothing yet!");
+  await redisPublisher.publish("insert", index);
 
   pgClient.query("INSERT INTO values(number) VALUES($1)", [index]);
 
   res.send({ working: true });
 });
 
+// --- STARTUP LOGIC (Unchanged) ---
 const startApp = async () => {
   try {
     // 1. Connect to Redis FIRST
-    console.log("Trying to connect to Redis Client...");
+    console.log(`Trying to connect to Redis Cluster at ${keys.redisHost}...`);
+    
+    // Connect the main client
     await redisClient.connect();
-    redisClient.on('error', (err) => console.error('Redis Client Error:', err));
-    redisClient.on('end', () => console.warn('Redis Connection Ended Unexpectedly!'));
-    redisClient.on('reconnecting', () => console.log('Redis attempting to reconnect...'));
+    
+    // Set up error logging for the main client
+    redisClient.on('error', (err) => console.error('Redis Cluster Error:', err));
+    redisClient.on('reconnecting', () => console.log('Redis Cluster attempting to reconnect...'));
 
     console.log("Trying to connect to Redis Publisher...");
+    
+    // Connect the publisher
     await redisPublisher.connect();
+    
     console.log("Redis Publisher connected");
-
 
     // 2. NOW that dependencies are ready, start the server
     app.listen(5000, () => {
@@ -92,7 +112,7 @@ const startApp = async () => {
     });
   } catch (err) {
     console.error("Failed to start server:", err);
-    process.exit(1); // Exit if we can't connect
+    process.exit(1); 
   }
 };
 

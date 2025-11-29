@@ -73,21 +73,14 @@ app.post("/values", async (req, res) => {
 });
 
 const startApp = async () => {
-  console.log("Server trying to connect to DBs...");
-  console.log("Redis Host:", keys.redisHost);
-  console.log("Redis Port:", keys.redisPort);
-
-  console.log("Postgres Host:", keys.pgHost);
-  console.log("Postgres Database:", keys.pgDatabase);
-  console.log("Postgres User:", keys.pgUser);
-  console.log("Postgres Port:", keys.pgPort);
-  console.log("Postgres Password:", keys.pgPassword);
-
   try {
     // 1. Connect to Redis FIRST
+    console.log("Trying to connect to Redis Client...");
     await redisClient.connect();
+    console.log("Redis Client connected");
+    console.log("Trying to connect to Redis Publisher...");
     await redisPublisher.connect();
-    console.log("Connected to Redis");
+    console.log("Redis Publisher connected");
 
     // 2. NOW that dependencies are ready, start the server
     app.listen(5000, () => {

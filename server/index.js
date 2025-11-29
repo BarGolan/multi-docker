@@ -21,12 +21,6 @@ const pgClient = new Pool({
       : { rejectUnauthorized: false },
 });
 
-// pgClient.on("error", () => console.log("Lost PG connection"));
-
-// pgClient
-//   .query("CREATE TABLE IF NOT EXISTS values (number INT)")
-//   .catch((err) => console.log(err));
-
 pgClient.on("connect", (client) => {
   client
     .query("CREATE TABLE IF NOT EXISTS values (number INT)")
@@ -91,9 +85,9 @@ const startApp = async () => {
 
   try {
     // 1. Connect to Redis FIRST
-    // await redisClient.connect();
-    // await redisPublisher.connect();
-    // console.log("Connected to Redis");
+    await redisClient.connect();
+    await redisPublisher.connect();
+    console.log("Connected to Redis");
 
     // 2. NOW that dependencies are ready, start the server
     app.listen(5000, () => {

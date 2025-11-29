@@ -76,6 +76,7 @@ app.post("/values", async (req, res) => {
 });
 
 const startApp = async () => {
+  console.log("Server trying to connect to DBs...");
   try {
     // 1. Connect to Redis FIRST
     await redisClient.connect();

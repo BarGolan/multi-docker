@@ -13,14 +13,54 @@
       "image": "bargolan1/multi-server",
       "hostname": "api",
       "essential": false,
-      "memory": 128
+      "memory": 128,
+      "environment": [
+        {
+          "name": "REDIS_HOST",
+          "value": "${REDIS_HOST}"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "${REDIS_PORT}"
+        },
+        {
+          "name": "PGUSER",
+          "value": "${PGUSER}"
+        },
+        {
+          "name": "PGHOST",
+          "value": "${PGHOST}"
+        },
+        {
+          "name": "PGDATABASE",
+          "value": "${PGDATABASE}"
+        },
+        {
+          "name": "PGPASSWORD",
+          "value": "${PGPASSWORD}"
+        },
+        {
+          "name": "PGPORT",
+          "value": "${PGPORT}"
+        }
+      ]
     },
     {
       "name": "worker",
       "image": "bargolan1/multi-worker",
       "hostname": "worker",
       "essential": false,
-      "memory": 128
+      "memory": 128,
+      "environment": [
+        {
+          "name": "REDIS_HOST",
+          "value": "${REDIS_HOST}"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "${REDIS_PORT}"
+        }
+      ]
     },
     {
       "name": "nginx",
